@@ -22,7 +22,7 @@ function getTotalValue(expenses) {
 function saveExpense(state, payload) {
   const { expense } = payload;
   const { expenses } = state;
-  if (expense.id == null || expense.id == '') {
+  if (expense.id == null || expense.id === '') {
     expense.id = state.currentId;
     expenses.push(expense);
     return {
@@ -34,9 +34,9 @@ function saveExpense(state, payload) {
       currentExpenseEdit: null,
     };
   }
-  expense.id = parseInt(expense.id);
+  expense.id = parseInt(expense.id, 10);
   const newEspense = expenses.map((expenseItem) => {
-    if (expenseItem.id == expense.id) return expense;
+    if (expenseItem.id === expense.id) return expense;
     return expenseItem;
   });
   return {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import FormDespesas from './FormDespesas';
 import { deleteExpense, selectEditExpense } from '../actions/wallet';
 
@@ -23,21 +24,24 @@ class TabelaDespesas extends React.Component {
   }
 
   deleteExpensehandle(expense) {
-    this.props.dispatch(deleteExpense({ expense }));
+    const { dispatch } = this.props;
+    dispatch(deleteExpense({ expense }));
   }
 
   editExpensehandle(expense) {
-    this.props.dispatch(selectEditExpense({ expense }));
+    const { dispatch } = this.props;
+    dispatch(selectEditExpense({ expense }));
   }
 
   render() {
+    const { wallet } = this.props;
     return (
       <>
         <section>
           <FormDespesas />
         </section>
-        <table>
-          <thead>
+        <table className="table">
+          <thead className="table-dark">
             <tr>
               <th>Descrição</th>
               <th>Tag</th>
@@ -51,7 +55,7 @@ class TabelaDespesas extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.wallet.expenses.map((expense) => (
+            {wallet.expenses.map((expense) => (
               <tr key={ expense.id }>
                 <td>{expense.description}</td>
                 <td>{expense.tag}</td>
@@ -67,6 +71,7 @@ class TabelaDespesas extends React.Component {
                   <button
                     type="button"
                     data-testid="edit-btn"
+                    className="btn btn-warning"
                     onClick={ () => this.editExpensehandle(expense) }
                   >
                     Editar
@@ -74,6 +79,7 @@ class TabelaDespesas extends React.Component {
                   <button
                     type="button"
                     data-testid="delete-btn"
+                    className="btn btn-danger"
                     onClick={ () => this.deleteExpensehandle(expense) }
                   >
                     Excluir
@@ -93,5 +99,14 @@ function mapStateToProps(state) {
     wallet: state.wallet,
   };
 }
+
+TabelaDespesas.propTypes = {
+  wallet: PropTypes.objectOf(PropTypes.any),
+  dispatch: PropTypes.func.isRequired,
+};
+
+TabelaDespesas.defaultProps = {
+  wallet: {},
+};
 
 export default connect(mapStateToProps)(TabelaDespesas);

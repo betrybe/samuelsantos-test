@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {addMoedas, fetchCurrencies } from '../actions/wallet';
+import PropTypes from 'prop-types';
+import { fetchMoeda, fetchCurrencies } from '../actions/wallet';
 
 const metodosDePagamento = [
   'Dinheiro',
@@ -27,13 +28,22 @@ class FormDespesas extends React.Component {
     this.tagRef = React.createRef();
     this.getMoedasFromApI();
     this.state = this.getDefaultStateLocal();
+    this.saveExpenseHandler = this.saveExpenseHandler.bind(this);
+  }
+
+  componentDidUpdate() {
+
+  }
+
+  getSnapshotBeforeUpdate() {
+    this.populeInputsEdit();
+    return this.state;
   }
 
   getDefaultStateLocal() {
     return {
-      edit:false,
       expenseId: '',
-      expenseValue: 0,
+      expenseValue: 0.00,
       expenseDescription: '',
       expenseCurrency: 'USD',
       expenseMethod: 'Dinheiro',
@@ -41,19 +51,15 @@ class FormDespesas extends React.Component {
     };
   }
 
-  getMoedasFromApI = () => {
-    fetch('https://economia.awesomeapi.com.br/json/all').then((response) => {
-      response.json().then((results) => {
-        const resultToArray = Object.keys(results);
-        this.props.dispatch(addMoedas({ moedas: resultToArray.filter(
-          (element) => element !== 'USDT' && element !== 'DOGE',
-        ) }));
-      });
-    });
+  getMoedasFromApI() {
+    const { dispatch } = this.props;
+    dispatch(fetchMoeda());
   }
 
-  saveExpenseHandler = (event) => {
+  saveExpenseHandler(event) {
     event.preventDefault();
+    const { dispatch } = this.props;
+    const { currentExpenseEdit } = this.props;
     const expense = {
       id: this.idRef.current.value,
       value: this.valorRef.current.value,
@@ -61,40 +67,49 @@ class FormDespesas extends React.Component {
       currency: this.moedaRef.current.value,
       method: this.pagamentoRef.current.value,
       tag: this.tagRef.current.value,
-      exchangeRates: this.props.currentExpenseEdit ? this.props.currentExpenseEdit.exchangeRates : null
+      exchangeRates: currentExpenseEdit ? currentExpenseEdit.exchangeRates : null,
     };
-    this.props.dispatch(fetchCurrencies({expense}))
-    this.setState({...this.getDefaultStateLocal()});
+    dispatch(fetchCurrencies({ expense }));
+    this.setState({ ...this.getDefaultStateLocal() });
+    return true;
   }
 
   populeInputsEdit() {
-    if(this.props.isEdit && this.idRef.current.value.length<1) {
+    const { isEdit, currentExpenseEdit } = this.props;
+    if (isEdit && this.idRef.current.value.length < 1 && currentExpenseEdit) {
       this.setState({
-        expenseId: this.props.currentExpenseEdit.id,
-        expenseValue: this.props.currentExpenseEdit.value,
-        expenseDescription: this.props.currentExpenseEdit.description,
-        expenseCurrency: this.props.currentExpenseEdit.currency,
-        expenseMethod: this.props.currentExpenseEdit.method,
-        expenseTag: this.props.currentExpenseEdit.tag,
-        edit: true
+        expenseId: currentExpenseEdit.id,
+        expenseValue: currentExpenseEdit.value || '0.00',
+        expenseDescription: currentExpenseEdit.description,
+        expenseCurrency: currentExpenseEdit.currency,
+        expenseMethod: currentExpenseEdit.method,
+        expenseTag: currentExpenseEdit.tag,
       });
     }
   }
-  componentDidUpdate() {
-    if(!this.state.edit)
-      this.populeInputsEdit();
-  }
 
   render() {
+    const {
+      expenseId,
+      expenseValue,
+      expenseDescription,
+      expenseCurrency,
+      expenseMethod,
+      expenseTag,
+    } = this.state;
+
+    const { isEdit, moedas } = this.props;
     return (
-      <form onSubmit={ this.saveExpenseHandler }>
+      <form
+        onSubmit={ (e) => this.saveExpenseHandler(e) }
+      >
         <input
           type="hidden"
           name="id"
           data-testid="id-input"
           ref={ this.idRef }
-          value={this.state.expenseId}
-          onChange={ (e) => this.setState({expenseId: e.target.value})}
+          value={ expenseId }
+          onChange={ (e) => this.setState({ expenseId: e.target.value }) }
         />
         <label htmlFor="valor">
           Valor:
@@ -104,8 +119,8 @@ class FormDespesas extends React.Component {
             min="0.00"
             step="0.01"
             data-testid="value-input"
-            value={this.state.expenseValue || ''}
-            onChange={ (e) => this.setState({expenseValue: e.target.value})}
+            value={ expenseValue || '' }
+            onChange={ (e) => this.setState({ expenseValue: e.target.value }) }
             type="number"
             ref={ this.valorRef }
           />
@@ -119,8 +134,8 @@ class FormDespesas extends React.Component {
             step="0.01"
             type="text"
             data-testid="description-input"
-            value={this.state.expenseDescription}
-            onChange={ (e) => this.setState({expenseDescription: e.target.value})}
+            value={ expenseDescription }
+            onChange={ (e) => this.setState({ expenseDescription: e.target.value }) }
             ref={ this.descricaoRef }
           />
         </label>
@@ -130,12 +145,12 @@ class FormDespesas extends React.Component {
             name="moeda"
             id="moeda"
             data-testid="currency-input"
-            value={this.state.expenseCurrency}
-            onChange={ (e) => this.setState({expenseCurrency: e.target.value})}
+            value={ expenseCurrency }
+            onChange={ (e) => this.setState({ expenseCurrency: e.target.value }) }
             ref={ this.moedaRef }
           >
-            {this.props.moedas.map(
-              (moedas) => <option key={ moedas }>{moedas}</option>,
+            { moedas.map(
+              (moeda) => <option key={ moeda }>{moeda}</option>,
             )}
           </select>
         </label>
@@ -146,8 +161,8 @@ class FormDespesas extends React.Component {
             id="pagamento"
             data-testid="method-input"
             ref={ this.pagamentoRef }
-            value={this.state.expenseMethod}
-            onChange={ (e) => this.setState({expenseMethod: e.target.value})}
+            value={ expenseMethod }
+            onChange={ (e) => this.setState({ expenseMethod: e.target.value }) }
           >
             {metodosDePagamento.map(
               (pagemento) => <option key={ pagemento }>{pagemento}</option>,
@@ -161,8 +176,8 @@ class FormDespesas extends React.Component {
             id="tag-despesa"
             data-testid="tag-input"
             ref={ this.tagRef }
-            value={this.state.expenseTag}
-            onChange={ (e) => this.setState({expenseTag: e.target.value})}
+            value={ expenseTag }
+            onChange={ (e) => this.setState({ expenseTag: e.target.value }) }
           >
             {tagsDespesa.map(
               (tag) => <option key={ tag }>{ tag }</option>,
@@ -170,7 +185,7 @@ class FormDespesas extends React.Component {
           </select>
         </label>
         <button type="submit" className="btn btn-success">
-          {this.props.isEdit ? 'Editar despesa' : 'Adicionar despesa' }
+          { isEdit ? 'Editar despesa' : 'Adicionar despesa' }
         </button>
       </form>
     );
@@ -180,10 +195,22 @@ class FormDespesas extends React.Component {
 function mapStateToProps(state) {
   return {
     moedas: state.wallet.currencies,
-    expenses: state.wallet.expenses,
     isEdit: state.wallet.isEdit,
-    currentExpenseEdit: state.wallet.currentExpenseEdit
+    currentExpenseEdit: state.wallet.currentExpenseEdit,
   };
 }
+
+FormDespesas.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  moedas: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])),
+  isEdit: PropTypes.bool,
+  currentExpenseEdit: PropTypes.objectOf(PropTypes.any),
+};
+
+FormDespesas.defaultProps = {
+  currentExpenseEdit: {},
+  moedas: [],
+  isEdit: false,
+};
 
 export default connect(mapStateToProps)(FormDespesas);
