@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { loggin } from '../actions/user'
+import loggin from '../actions/user'
 
 class Login extends React.Component {
   constructor(props){
@@ -15,7 +15,7 @@ class Login extends React.Component {
     return regex.test(value);
   }
 
-  checkForSubmit(){
+  checkForSubmit () {
     return !this.state.emailErro && !this.state.passwordErro;
   }
 
@@ -47,10 +47,10 @@ class Login extends React.Component {
         <h1>Trybe Wallet</h1>
         <form onSubmit={this.handleClickSubmitLogin}>
           <div>
-            <input type="email" ref={this.emailRef} onKeyUp={this.handleValidateEmailKeyUp} id="email" data-testeid="email-input" />
+            <input type="email" ref={this.emailRef} onKeyUp={this.handleValidateEmailKeyUp} id="email" data-testid="email-input" />
           </div>
           <div>
-            <input type="password" onKeyUp={this.handleValidatePasswordKeyUp} id="password" data-testeid="password-input" />
+            <input type="password" onKeyUp={this.handleValidatePasswordKeyUp} id="password" data-testid="password-input" />
           </div>
           <div>
             <button type="submit" onClick={this.handleClickSubmitLogin} disabled={this.state.emailErro || this.state.passwordErro}>Entrar</button>
@@ -61,10 +61,10 @@ class Login extends React.Component {
   }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
   return {
-    email: state.user.email
-  }
+    email: state.user.email,
+  };
 }
 
 export default connect(mapStateToProps)(Login);
