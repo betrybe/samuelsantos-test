@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import FormDespesas from './FormDespesas';
-import { deleteExpense } from '../actions/wallet';
+import { deleteExpense, selectEditExpense } from '../actions/wallet';
 
 class TabelaDespesas extends React.Component {
   getNameCurrency(item) {
     if (!item) return '';
-    return item.exchangeRates[item.currency].name;
+    return item.exchangeRates[item.currency].name.split('/')[0];
   }
 
   getValueConvert(item) {
@@ -26,8 +26,11 @@ class TabelaDespesas extends React.Component {
     this.props.dispatch(deleteExpense({ expense }));
   }
 
+  editExpensehandle(expense) {
+    this.props.dispatch(selectEditExpense({ expense }));
+  }
+
   render() {
-    console.log(this.props.wallet)
     return (
       <>
         <section>
@@ -64,6 +67,7 @@ class TabelaDespesas extends React.Component {
                   <button
                     type="button"
                     data-testid="edit-btn"
+                    onClick={ () => this.editExpensehandle(expense) }
                   >
                     Editar
                   </button>

@@ -5,6 +5,7 @@ const initialState = {
   currentId: 0,
   currentTotal: 0,
   isEdit: false,
+  currentExpenseEdit: null,
 };
 
 function getTotalValue(expenses) {
@@ -21,17 +22,30 @@ function getTotalValue(expenses) {
 function saveExpense(state, payload) {
   const { expense } = payload;
   const { expenses } = state;
-  if (payload.expense.id == null) {
+  if (expense.id == null || expense.id == '') {
     expense.id = state.currentId;
     expenses.push(expense);
     return {
       ...state,
       expenses,
+      isEdit: false,
       currentId: state.currentId + 1,
       currentTotal: getTotalValue(expenses),
+      currentExpenseEdit: null,
     };
   }
-  return { state };
+  expense.id = parseInt(expense.id);
+  const newEspense = expenses.map((expenseItem) => {
+    if (expenseItem.id == expense.id) return expense;
+    return expenseItem;
+  });
+  return {
+    ...state,
+    expenses: newEspense,
+    currentTotal: getTotalValue(newEspense),
+    isEdit: false,
+    currentExpenseEdit: null,
+  };
 }
 
 function deleteExpense(state, payload) {
@@ -56,6 +70,8 @@ export default function (state = initialState, action) {
     return saveExpense(state, action.payload);
   case 'deleteExpense':
     return deleteExpense(state, action.payload);
+  case 'selectEditExpense':
+    return { ...state, currentExpenseEdit: action.payload.expense, isEdit: true };
   default:
     return state;
   }
