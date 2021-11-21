@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addMoedas } from '../actions/wallet';
+import {addMoedas, fetchCurrencies } from '../actions/wallet';
 
 const metodosDePagamento = [
   'Dinheiro',
@@ -19,10 +19,16 @@ const tagsDespesa = [
 class FormDespesas extends React.Component {
   constructor(props) {
     super(props);
+    this.idRef = React.createRef();
+    this.valorRef = React.createRef();
+    this.descricaoRef = React.createRef();
+    this.moedaRef = React.createRef();
+    this.pagamentoRef = React.createRef();
+    this.tagRef = React.createRef();
     this.getMoedasFromApI();
   }
 
-  getMoedasFromApI() {
+  getMoedasFromApI = () => {
     fetch('https://economia.awesomeapi.com.br/json/all').then((response) => {
       response.json().then((results) => {
         const resultToArray = Object.keys(results);
@@ -33,21 +39,35 @@ class FormDespesas extends React.Component {
     });
   }
 
-  saveExpenseHandler(event) {
+  saveExpenseHandler = (event) => {
     event.preventDefault();
+    const expense = {
+      id: null,
+      value: this.valorRef.current.value,
+      description: this.descricaoRef.current.value,
+      currency: this.moedaRef.current.value,
+      method: this.pagamentoRef.current.value,
+      tag: this.tagRef.current.value,
+    };
+    this.props.dispatch(fetchCurrencies({expense}))
   }
 
   render() {
     return (
-      <form onSubmit={this.saveExpenseHandler}>
+      <form onSubmit={ this.saveExpenseHandler }>
+        <input
+          type="hidden"
+          name="id"
+          ref={ this.idRef }
+        />
         <label htmlFor="valor">
           Valor:
           <input
             name="valor"
             id="valor"
             min="0.00"
-            step="0.01"
             type="number"
+            ref={ this.valorRef }
           />
         </label>
         <label htmlFor="descricao">
@@ -58,6 +78,7 @@ class FormDespesas extends React.Component {
             min="0.00"
             step="0.01"
             type="text"
+            ref={ this.descricaoRef }
           />
         </label>
         <label htmlFor="moeda">
@@ -65,6 +86,7 @@ class FormDespesas extends React.Component {
           <select
             name="moeda"
             id="moeda"
+            ref={ this.moedaRef }
           >
             {this.props.moedas.map(
               (moedas) => <option key={ moedas }>{moedas}</option>,
@@ -76,6 +98,7 @@ class FormDespesas extends React.Component {
           <select
             name="pagamento"
             id="pagamento"
+            ref={ this.pagamentoRef }
           >
             {metodosDePagamento.map(
               (pagemento) => <option key={ pagemento }>{pagemento}</option>,
@@ -87,6 +110,7 @@ class FormDespesas extends React.Component {
           <select
             name="tag-despesa"
             id="tag-despesa"
+            ref={ this.tagRef }
           >
             {tagsDespesa.map(
               (tag) => <option key={ tag }>{ tag }</option>,
@@ -104,6 +128,7 @@ class FormDespesas extends React.Component {
 function mapStateToProps(state) {
   return {
     moedas: state.wallet.currencies,
+    expenses: state.wallet.expenses
   };
 }
 

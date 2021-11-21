@@ -17,7 +17,7 @@ class Header extends React.Component {
             <b>Despesa Total: </b>
             R$
             <span className="me-1" data-testid="total-field">
-              0.00
+              { this.props.valorTotal || '0.00' }
             </span>
             <span data-testid="header-currency-field">BRL</span>
           </span>
@@ -30,6 +30,8 @@ class Header extends React.Component {
 function mapStateToProps(state) {
   return {
     email: state.user.email,
+    valorTotal: state.wallet.currentTotal,
+    teste: state.wallet.expenses,
   };
 }
 
