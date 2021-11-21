@@ -14,10 +14,10 @@ export function saveExpense(expense) {
   };
 }
 
-export function deleteExpense(moedas) {
+export function deleteExpense(expense) {
   return {
     type: 'deleteExpense',
-    payload: moedas,
+    payload: expense,
   };
 }
 

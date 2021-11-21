@@ -31,7 +31,6 @@ function mapStateToProps(state) {
   return {
     email: state.user.email,
     valorTotal: state.wallet.currentTotal,
-    teste: state.wallet.expenses,
   };
 }
 

@@ -4,12 +4,12 @@ const initialState = {
   expenses: [],
   currentId: 0,
   currentTotal: 0,
+  isEdit: false,
 };
 
 function getTotalValue(expenses) {
   let valueTotal = 0.00;
   if (expenses.length <= 0) return valueTotal;
-
   expenses.forEach((expense) => {
     valueTotal
       += parseFloat(expense.value)
@@ -26,12 +26,26 @@ function saveExpense(state, payload) {
     expenses.push(expense);
     return {
       ...state,
-      expenses: expenses,
+      expenses,
       currentId: state.currentId + 1,
       currentTotal: getTotalValue(expenses),
     };
   }
   return { state };
+}
+
+function deleteExpense(state, payload) {
+  const { expense } = payload;
+  const { expenses } = state;
+
+  const newExpenseAfterDelete = expenses.filter(
+    (expenseItem) => expenseItem.id !== expense.id,
+  );
+  return {
+    ...state,
+    expenses: newExpenseAfterDelete,
+    currentTotal: getTotalValue(newExpenseAfterDelete),
+  };
 }
 
 export default function (state = initialState, action) {
@@ -40,7 +54,8 @@ export default function (state = initialState, action) {
     return { ...state, currencies: action.payload.moedas };
   case 'saveExpense':
     return saveExpense(state, action.payload);
-
+  case 'deleteExpense':
+    return deleteExpense(state, action.payload);
   default:
     return state;
   }

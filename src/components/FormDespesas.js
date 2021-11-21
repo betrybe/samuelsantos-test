@@ -66,6 +66,7 @@ class FormDespesas extends React.Component {
             name="valor"
             id="valor"
             min="0.00"
+            step="0.01"
             type="number"
             ref={ this.valorRef }
           />
@@ -118,7 +119,7 @@ class FormDespesas extends React.Component {
           </select>
         </label>
         <button type="submit" className="btn btn-success">
-          Adicionar despesa
+          {this.props.isEdit ? 'Adicionar despesa' : 'Editar despesa'}
         </button>
       </form>
     );
@@ -128,7 +129,8 @@ class FormDespesas extends React.Component {
 function mapStateToProps(state) {
   return {
     moedas: state.wallet.currencies,
-    expenses: state.wallet.expenses
+    expenses: state.wallet.expenses,
+    isEdit: state.wallet.isEdit,
   };
 }
 
