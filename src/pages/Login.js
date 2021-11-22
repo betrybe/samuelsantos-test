@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import loggin from '../actions/user';
+import './Login.css';
 
 const LIMIT = 6;
 
@@ -52,12 +53,26 @@ class Login extends React.Component {
     const { email } = this.props;
     if (email) return (<Redirect to={ { pathname: '/carteira' } } />);
     return (
-      <div>
-        <h1>Trybe Wallet</h1>
+      <div
+        className={ [
+          'container',
+          'divLogin',
+        ].join(' ') }
+      >
+        <h1>
+          <img
+            src="./trybeLogo.png"
+            alt="Logo"
+            className="imgLogin"
+          />
+          Wallet
+        </h1>
         <form onSubmit={ (e) => this.handleClickSubmitLogin(e) }>
           <div>
             <input
+              className="form-control"
               type="email"
+              placeholder="E-mail"
               ref={ this.emailRef }
               onKeyUp={ (e) => this.handleValidateEmailKeyUp(e) }
               id="email"
@@ -66,7 +81,9 @@ class Login extends React.Component {
           </div>
           <div>
             <input
+              className="form-control mt-2"
               type="password"
+              placeholder="Senha"
               onKeyUp={ (e) => this.handleValidatePasswordKeyUp(e) }
               id="password"
               data-testid="password-input"
@@ -75,6 +92,7 @@ class Login extends React.Component {
           <div>
             <button
               type="submit"
+              className="btn btn-success form-control"
               disabled={ emailErro || passwordErro }
             >
               Entrar

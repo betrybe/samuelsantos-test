@@ -37,7 +37,13 @@ class TabelaDespesas extends React.Component {
     const { wallet } = this.props;
     return (
       <>
-        <section>
+        <section
+          className={
+            wallet.isEdit
+              ? 'bg-success text-dark'
+              : 'bg-dark text-light'
+          }
+        >
           <FormDespesas />
         </section>
         <table className="table">
@@ -71,7 +77,7 @@ class TabelaDespesas extends React.Component {
                   <button
                     type="button"
                     data-testid="edit-btn"
-                    className="btn btn-warning"
+                    className="btn btn-warning me-1"
                     onClick={ () => this.editExpensehandle(expense) }
                   >
                     Editar

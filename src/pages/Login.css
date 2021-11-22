@@ -1,0 +1,20 @@
+.divLogin {
+  border: 1px solid #000;
+  border-radius: 4%;
+  margin-top: 20vh;
+  max-height: 200vw;
+  max-width: 27rem;
+  padding: 3rem;
+}
+
+.imgLogin {
+  width: 100%;
+}
+
+h1 {
+  text-align: end;
+}
+
+input, button {
+  margin-top: 3%;
+}

@@ -6,8 +6,12 @@ class Header extends React.Component {
   render() {
     const { email, valorTotal } = this.props;
     return (
-      <header className="navbar navbar-light bg-ligth">
-        <h1 className="me-4">Trybe Wallet</h1>
+      <header className="navbar navbar-light bg-light">
+        <img
+          src="./trybeLogo.png"
+          alt="Logo"
+          className="me-4 imgLogo"
+        />
         <div className="d-flex">
           <span className="me-2">
             <b>Email: </b>

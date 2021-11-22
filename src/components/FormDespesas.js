@@ -43,7 +43,7 @@ class FormDespesas extends React.Component {
   getDefaultStateLocal() {
     return {
       expenseId: '',
-      expenseValue: 0.00,
+      expenseValue: '0.00',
       expenseDescription: '',
       expenseCurrency: 'USD',
       expenseMethod: 'Dinheiro',
@@ -101,6 +101,7 @@ class FormDespesas extends React.Component {
     const { isEdit, moedas } = this.props;
     return (
       <form
+        className="row"
         onSubmit={ (e) => this.saveExpenseHandler(e) }
       >
         <input
@@ -111,9 +112,10 @@ class FormDespesas extends React.Component {
           value={ expenseId }
           onChange={ (e) => this.setState({ expenseId: e.target.value }) }
         />
-        <label htmlFor="valor">
+        <label htmlFor="valor" className="col">
           Valor:
           <input
+            className="form-control"
             name="valor"
             id="valor"
             min="0.00"
@@ -125,10 +127,11 @@ class FormDespesas extends React.Component {
             ref={ this.valorRef }
           />
         </label>
-        <label htmlFor="descricao">
+        <label htmlFor="descricao" className="col">
           Descrição:
           <input
             name="descricao"
+            className="form-control"
             id="descricao"
             min="0.00"
             step="0.01"
@@ -139,11 +142,12 @@ class FormDespesas extends React.Component {
             ref={ this.descricaoRef }
           />
         </label>
-        <label htmlFor="moeda">
+        <label htmlFor="moeda" className="col">
           Moeda:
           <select
             name="moeda"
             id="moeda"
+            className="form-control"
             data-testid="currency-input"
             value={ expenseCurrency }
             onChange={ (e) => this.setState({ expenseCurrency: e.target.value }) }
@@ -154,11 +158,12 @@ class FormDespesas extends React.Component {
             )}
           </select>
         </label>
-        <label htmlFor="pagamento">
+        <label htmlFor="pagamento" className="col">
           Método de pagamento:
           <select
             name="pagamento"
             id="pagamento"
+            className="form-control"
             data-testid="method-input"
             ref={ this.pagamentoRef }
             value={ expenseMethod }
@@ -169,9 +174,10 @@ class FormDespesas extends React.Component {
             )}
           </select>
         </label>
-        <label htmlFor="tag-despesa">
+        <label htmlFor="tag-despesa" className="col">
           Tag:
           <select
+            className="form-control"
             name="tag-despesa"
             id="tag-despesa"
             data-testid="tag-input"
@@ -184,7 +190,14 @@ class FormDespesas extends React.Component {
             )}
           </select>
         </label>
-        <button type="submit" className="btn btn-success">
+        <button
+          type="submit"
+          className={
+            isEdit
+              ? 'btn btn-dark col addEdit'
+              : 'btn btn-primary col addEdit'
+          }
+        >
           { isEdit ? 'Editar despesa' : 'Adicionar despesa' }
         </button>
       </form>
